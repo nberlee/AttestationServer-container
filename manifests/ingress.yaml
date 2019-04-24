@@ -1,0 +1,22 @@
+apiVersion: v1
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/ssl-redirect: "true"
+  name: attestation-server
+spec:
+  rules:
+  #       CHANGE ME:
+  - host: attestation.at.home
+    http:
+      paths:
+      - backend:
+          serviceName: attestation-server
+          servicePort: 80
+  tls:
+  - hosts:
+    # CHANGE ME:
+    - attestation.at.home
+    secretName: cert-attestation-server

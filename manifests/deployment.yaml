@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attestation-server
+  labels:
+    app: attestation-server
+spec:
+  revisionHistoryLimit: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: attestation-server
+  template:
+    metadata:
+      labels:
+        app: attestation-server
+    spec:
+      serviceAccountName: attestation-server
+      initContainers:
+      - name: html-to-webserver
+        image: attestation-server
+        command: ["cp", "-R", "/var/www/html", "/"]
+        securityContext:
+          runAsUser: 1000
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+        volumeMounts:
+          - mountPath: /html
+            name: html
+      containers:
+      - name: attestation-server
+        image: attestation-server
+        ports:
+        - name: http
+          containerPort: 8080
+        securityContext:
+          runAsUser: 1000
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+        envFrom:
+        - configMapRef:
+            name: attestation-mailsettings
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: data
+          mountPath: /data
+      - name: webserver
+        image: nginx
+        ports:
+        - name: http
+          containerPort: 8000
+        securityContext:
+          runAsUser: 82
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 100Mi
+        volumeMounts:
+        - name: attestation-server-nginx-conf
+          readOnly: true
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default-k8s.conf
+        - name: attestation-server-nginx-conf
+          mountPath: /etc/nginx/nginx.conf
+          readOnly: true
+          subPath: nginx.conf
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: html
+          readOnly: true
+          mountPath: /var/www/html
+      securityContext:
+          fsGroup: 82
+      volumes:
+        - name: attestation-server-nginx-conf
+          configMap:
+            name: "attestation-server-nginx-conf"
+        - name: nginx-cache
+          emptyDir: {}
+        - name: html
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: data
+          hostPath:
+            path: /data/AttestationServerDB
+            type: Directory

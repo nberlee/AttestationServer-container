@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: attestation
+
+resources:
+- manifests/namespace.yaml
+- manifests/serviceaccount.yaml
+- manifests/deployment.yaml
+- manifests/service.yaml
+- manifests/ingress.yaml
+
+configMapGenerator:
+- name: attestation-server-nginx-conf
+  files:
+  - container/nginx/nginx.conf
+  - container/nginx/conf.d/default-k8s.conf
+- name: attestation-mailsettings
+  files:
+  - mailsettings.env
+images:
+  - name: nginx
+    newTag: stable-alpine
+  - name: attestation-server
+    newTag: 44f18acb5aec247a8057688bea1301de0a469315
