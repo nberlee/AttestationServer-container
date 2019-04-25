@@ -42,8 +42,15 @@ spec:
           runAsUser: 1000
           runAsNonRoot: true
           readOnlyRootFilesystem: true
+        resources:
+          limits:
+            cpu: 1
+            memory: 300Mi
+          requests:
+            cpu: 200m
+            memory: 100Mi
         envFrom:
-        - configMapRef:
+        - secretRef:
             name: attestation-mailsettings
         volumeMounts:
         - name: tmp
