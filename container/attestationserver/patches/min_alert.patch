@@ -1,0 +1,26 @@
+diff --git a/src/main/java/app/attestation/server/AttestationServer.java b/src/main/java/app/attestation/server/AttestationServer.java
+index 11aa26c..1b8bb99 100644
+--- a/src/main/java/app/attestation/server/AttestationServer.java
++++ b/src/main/java/app/attestation/server/AttestationServer.java
+@@ -75,7 +75,7 @@ public class AttestationServer {
+     private static final int MIN_VERIFY_INTERVAL = 60 * 60;
+     private static final int MAX_VERIFY_INTERVAL = 7 * 24 * 70 * 60;
+     private static final int DEFAULT_ALERT_DELAY = 48 * 60 * 60;
+-    private static final int MIN_ALERT_DELAY = 32 * 60 * 60;
++    private static final int MIN_ALERT_DELAY = 24 * 60 * 60;
+     private static final int MAX_ALERT_DELAY = 2 * 7 * 24 * 60 * 60;
+     private static final int BUSY_TIMEOUT = 10 * 1000;
+     private static final int QR_CODE_SIZE = 300;
+
+--- a/static/index.html
++++ b/static/index.html
+@@ -69,7 +69,7 @@
+                 <form id="configuration">
+                     <h2>Configuration:</h2>
+                     <label>Verify interval (hours): <input name="verify_interval" type="number" min="1" max="168" required="required"/></label><br/>
+-                    <label>Permitted delay until alerts (hours): <input name="alert_delay" type="number" min="32" max="336" required="required"/></label><br/>
++                    <label>Permitted delay until alerts (hours): <input name="alert_delay" type="number" min="24" max="336" required="required"/></label><br/>
+                     <label>Alert email: <input name="email" type="email"/></label><br/>
+                     <button name="submit">Set configuration</button>
+                 </form>
+

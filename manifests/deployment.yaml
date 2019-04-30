@@ -6,7 +6,7 @@ metadata:
     app: attestation-server
 spec:
   revisionHistoryLimit: 1
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -52,6 +52,18 @@ spec:
         envFrom:
         - secretRef:
             name: attestation-mailsettings
+        livenessProbe:
+          httpGet:
+            path: /_up
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /_up
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
         volumeMounts:
         - name: tmp
           mountPath: /tmp
@@ -66,18 +78,6 @@ spec:
           runAsUser: 82
           runAsNonRoot: true
           readOnlyRootFilesystem: true
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8000
-          initialDelaySeconds: 3
-          periodSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8000
-          initialDelaySeconds: 3
-          periodSeconds: 3
         resources:
           limits:
             cpu: 200m
@@ -90,6 +90,10 @@ spec:
           readOnly: true
           mountPath: /etc/nginx/conf.d/default.conf
           subPath: default-k8s.conf
+        - name: attestation-server-nginx-conf
+          readOnly: true
+          mountPath: /etc/nginx/conf.d/headers.include
+          subPath: headers.include
         - name: attestation-server-nginx-conf
           mountPath: /etc/nginx/nginx.conf
           readOnly: true

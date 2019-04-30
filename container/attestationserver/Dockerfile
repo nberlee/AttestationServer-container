@@ -6,7 +6,7 @@ FROM openjdk:$OPENJDK_TAG as builder
 ARG ATTESTATION_PUB_DOMAIN=attestation.at.home
 
 ARG ATTESTATION_BRANCH=master
-ARG ATTESTATION_COMMIT=44f18acb5aec247a8057688bea1301de0a469315
+ARG ATTESTATION_COMMIT=1531d7dc4ba1f861515a6caaa7fc7fa6273e89d5
 
 RUN apt update && apt install -y git
 RUN git clone -b $ATTESTATION_BRANCH \
@@ -19,9 +19,13 @@ RUN git clone -b $ATTESTATION_BRANCH \
 WORKDIR /src/AttestationServer
 RUN git checkout $ATTESTATION_COMMIT
 
-COPY patches/*.patch /src
+COPY patches/*.patch /src/
+RUN patch -p1 < /src/cert_fingerprints.patch
+RUN patch -p1 < /src/min_alert.patch
 RUN patch -p1 < /src/binding.patch
+RUN patch -p1 < /src/healthcheck.patch
 RUN sed -i "s/attestation.app/$ATTESTATION_PUB_DOMAIN/g" src/main/java/app/attestation/server/AttestationServer.java
+RUN sed -i "s/https:\/\/attestation.app/\https:\/\/$ATTESTATION_PUB_DOMAIN/g" static/*.html
 RUN ./gradlew build
 
 FROM openjdk:$OPENJDK_TAG

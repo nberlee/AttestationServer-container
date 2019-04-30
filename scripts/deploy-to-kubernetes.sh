@@ -47,7 +47,7 @@ sed -i "/^  - name: attestation-server/!b;n;c\ \ \ \ newTag: $TAG" kustomization
 
 echo
 echo "Collecting kubernetes kustomize manifest files"
-tar cvf /tmp/kustomize.tar kustomization.yaml mailsettings.env container/nginx/nginx.conf container/nginx/conf.d/default-k8s.conf manifests
+tar cvf /tmp/kustomize.tar kustomization.yaml mailsettings.env container/nginx/nginx.conf container/nginx/conf.d/default-k8s.conf container/nginx/conf.d/headers.include manifests
 
 echo
 echo "Uploading container image and manifest files to '$SSHSERVER'"

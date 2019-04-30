@@ -1,0 +1,44 @@
+--- a/src/main/java/app/attestation/server/AttestationServer.java
++++ b/src/main/java/app/attestation/server/AttestationServer.java
+@@ -217,6 +217,7 @@ public class AttestationServer {
+         server.createContext("/devices.json", new DevicesHandler());
+         server.createContext("/challenge", new ChallengeHandler());
+         server.createContext("/verify", new VerifyHandler());
++        server.createContext("/_up", new HealthcheckHandler());
+         server.setExecutor(new ThreadPoolExecutor(10, 100, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>()));
+         server.start();
+     }
+@@ -235,6 +236,21 @@ public class AttestationServer {
+         }
+     }
+ 
++    private abstract static class GetHandler implements HttpHandler {
++        protected abstract void handleGet(final HttpExchange exchange) throws IOException;
++
++        @Override
++        public final void handle(final HttpExchange exchange) throws IOException {
++            if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
++                exchange.getResponseHeaders().set("Allow", "Get");
++                exchange.sendResponseHeaders(405, -1);
++                return;
++            }
++            handleGet(exchange);
++        }
++    }
++
++
+     private static class SubmitHandler extends PostHandler {
+         @Override
+         public void handlePost(final HttpExchange exchange) throws IOException {
+@@ -1136,4 +1152,10 @@ public class AttestationServer {
+             }
+         }
+     }
++    private static class HealthcheckHandler extends GetHandler {
++        @Override
++        public void handleGet(final HttpExchange exchange) throws IOException {
++            exchange.sendResponseHeaders(204, -1);
++        }
++    }
+ }
+

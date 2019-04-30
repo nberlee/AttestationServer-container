@@ -15,6 +15,7 @@ configMapGenerator:
   files:
   - container/nginx/nginx.conf
   - container/nginx/conf.d/default-k8s.conf
+  - container/nginx/conf.d/headers.include
 
 secretGenerator:
 - name: attestation-mailsettings
@@ -24,4 +25,4 @@ images:
   - name: nginx
     newTag: stable-alpine
   - name: attestation-server
-    newTag: 44f18acb5aec247a8057688bea1301de0a469315
+    newTag: 1531d7dc4ba1f861515a6caaa7fc7fa6273e89d5
