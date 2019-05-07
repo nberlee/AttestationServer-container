@@ -1,5 +1,5 @@
     add_header Content-Security-Policy "default-src 'none'; connect-src 'self'; font-src 'self'; img-src blob: 'self'; manifest-src 'self'; script-src 'self'; style-src 'self'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content; base-uri 'none';" always;
-    add_header Feature-Policy "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'none'; sync-xhr 'none'; usb 'none'; vr 'none'" always;
+    add_header Feature-Policy "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; document-domain 'none'; encrypted-media 'none'; fullscreen 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'none'; sync-xhr 'none'; usb 'none'; vr 'none'; wake-lock 'none'; xr 'none'" always;
     add_header Strict-Transport-Security "max-age=63072000; preload" always;
     add_header X-Content-Type-Options nosniff;
     add_header X-XSS-Protection "1; mode=block";
